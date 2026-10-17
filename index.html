@@ -1,0 +1,484 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#500015">
+<title>Арсен & Амина — Свадебное приглашение</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Great+Vibes&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --burgundy:#800020;
+  --dark:#500015;
+  --ivory:#fffdf9;
+  --gold:#b99a68;
+}
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  margin:0;
+  font-family:Montserrat,sans-serif;
+  background:var(--ivory);
+  color:#4b3438;
+}
+body.locked { overflow:hidden; }
+.script {
+  font-family:"Great Vibes",cursive;
+  color:var(--burgundy);
+}
+#cover {
+  position:fixed;
+  inset:0;
+  z-index:100;
+  display:grid;
+  place-items:center;
+  padding:24px;
+  background:radial-gradient(circle,#800020,#500015 75%);
+  transition:opacity .9s,visibility .9s;
+}
+#cover::before {
+  content:"";
+  position:absolute;
+  inset:14px;
+  border:1px solid #ffffff66;
+  pointer-events:none;
+}
+#cover.dismissed {
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+.cover-content {
+  position:relative;
+  width:min(100%,360px);
+  text-align:center;
+  color:white;
+}
+.cover-label,.open-hint {
+  font-size:10px;
+  letter-spacing:3px;
+  line-height:2;
+}
+.cover-label { margin-bottom:34px; }
+.envelope {
+  position:relative;
+  display:block;
+  width:100%;
+  aspect-ratio:1.45;
+  padding:0;
+  border:0;
+  border-radius:0;
+  background:#f9f1e8;
+  cursor:pointer;
+  overflow:hidden;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+.envelope::before {
+  content:"";
+  position:absolute;
+  inset:0;
+  background:#fffaf4;
+  clip-path:polygon(0 0,100% 0,50% 65%);
+  transform-origin:top;
+  transition:transform .8s ease;
+  z-index:2;
+}
+.envelope::after {
+  content:"";
+  position:absolute;
+  inset:0;
+  background:#eadbcd;
+  clip-path:polygon(0 100%,50% 48%,100% 100%);
+  z-index:3;
+  pointer-events:none;
+}
+#cover.opening .envelope::before {
+  transform:rotateX(180deg);
+}
+.seal {
+  position:absolute;
+  z-index:4;
+  top:55%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:70px;
+  height:70px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:var(--burgundy);
+  border:2px solid var(--gold);
+  color:white;
+  font:27px "Great Vibes",cursive;
+  transition:opacity .3s;
+  pointer-events:none;
+}
+#cover.opening .seal { opacity:0; }
+.open-hint { margin-top:28px; }
+
+#main {
+  display:none;
+  opacity:0;
+  transition:opacity .7s;
+}
+#main.visible {
+  display:block;
+  opacity:1;
+}
+section {
+  padding:75px 20px;
+  text-align:center;
+}
+.hero {
+  min-height:90svh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  background:#fbf4ef;
+}
+.eyebrow {
+  color:var(--gold);
+  font-size:10px;
+  letter-spacing:4px;
+  line-height:1.8;
+  text-transform:uppercase;
+}
+.hero .script {
+  font-size:clamp(48px,12vw,86px);
+  margin:24px 0;
+}
+.hero-date { letter-spacing:3px;font-size:12px; }
+h2 {
+  font:400 clamp(32px,7vw,46px) "Cormorant Garamond",serif;
+  color:var(--burgundy);
+}
+.photos {
+  max-width:680px;
+  margin:30px auto 0;
+  display:grid;
+  gap:18px;
+}
+.photos img {
+  display:block;
+  width:100%;
+  height:auto;
+  object-fit:cover;
+}
+.photos img:nth-child(2) {
+  width:82%;
+  margin:auto;
+}
+.invitation {
+  max-width:550px;
+  margin:auto;
+  font:24px/1.7 "Cormorant Garamond",serif;
+}
+.details {
+  background:var(--burgundy);
+  color:white;
+}
+.details h2 { color:white; }
+.detail-date {
+  font:clamp(32px,8vw,50px) "Cormorant Garamond",serif;
+  margin:25px 0;
+}
+.detail-label {
+  margin-top:25px;
+  color:#e5c9a6;
+  font-size:10px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+}
+.detail-value {
+  margin-top:10px;
+  font:26px "Cormorant Garamond",serif;
+}
+.map-link {
+  display:inline-block;
+  margin-top:28px;
+  padding:14px 22px;
+  border:1px solid var(--gold);
+  color:white;
+  text-decoration:none;
+  font-size:10px;
+  letter-spacing:2px;
+}
+.countdown {
+  display:flex;
+  justify-content:center;
+  gap:20px;
+  flex-wrap:wrap;
+}
+.count-number {
+  font:40px "Cormorant Garamond",serif;
+  color:var(--burgundy);
+}
+.count-label { font-size:9px;letter-spacing:1px; }
+.rsvp { background:#f7f0e9; }
+.form {
+  max-width:440px;
+  margin:30px auto 0;
+  text-align:left;
+}
+.form label.field {
+  display:block;
+  margin:20px 0 8px;
+  font-size:11px;
+}
+.form input[type="text"] {
+  width:100%;
+  padding:15px;
+  border:1px solid #d9c7bb;
+  background:white;
+  font:inherit;
+}
+.option {
+  display:block;
+  padding:15px;
+  margin-top:10px;
+  border:1px solid #d9c7bb;
+  background:white;
+  font-size:13px;
+}
+.submit {
+  width:100%;
+  padding:17px;
+  margin-top:25px;
+  border:0;
+  background:var(--burgundy);
+  color:white;
+  letter-spacing:2px;
+  cursor:pointer;
+}
+.message {
+  text-align:center;
+  font-size:13px;
+  line-height:1.6;
+  margin-top:15px;
+}
+.music-control {
+  position:fixed;
+  right:18px;
+  bottom:calc(18px + env(safe-area-inset-bottom));
+  z-index:50;
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  border:1px solid var(--gold);
+  background:white;
+  color:var(--burgundy);
+  font-size:20px;
+  cursor:pointer;
+  box-shadow:0 4px 18px #0002;
+}
+.music-control[hidden] { display:none; }
+footer {
+  background:var(--dark);
+  color:white;
+  padding:45px 20px;
+  text-align:center;
+}
+footer .script { color:white;font-size:44px; }
+
+@media(min-width:700px) {
+  .photos { grid-template-columns:1fr 1fr; }
+  .photos img:nth-child(2) { width:100%; }
+  .photos img:nth-child(3) {
+    grid-column:1/-1;
+    width:75%;
+    margin:auto;
+  }
+}
+@media(prefers-reduced-motion:reduce) {
+  *,*::before,*::after {
+    scroll-behavior:auto !important;
+    transition-duration:.01ms !important;
+  }
+}
+</style>
+</head>
+
+<body class="locked">
+
+<div id="cover">
+  <div class="cover-content">
+    <div class="cover-label">ВЫ ПРИГЛАШЕНЫ НА СВАДЬБУ</div>
+    <button class="envelope" id="openEnvelope" type="button"
+      aria-label="Открыть приглашение">
+      <span class="seal">А &amp; А</span>
+    </button>
+    <div class="open-hint">НАЖМИТЕ НА КОНВЕРТ, ЧТОБЫ ОТКРЫТЬ</div>
+  </div>
+</div>
+
+<audio id="music" src="assets/you-are-my-only-one.mp3"
+  loop preload="auto" playsinline></audio>
+<button id="musicButton" class="music-control" type="button"
+  hidden aria-label="Включить или выключить музыку">♫</button>
+
+<main id="main">
+  <section class="hero">
+    <div class="eyebrow">Приглашение на свадьбу</div>
+    <div class="script">Арсен &amp; Амина</div>
+    <div style="color:#b99a68">✦ ❦ ✦</div>
+    <h2>День нашей любви</h2>
+    <div class="hero-date">20 · 11 · 2026</div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Наша история</div>
+    <h2>Два сердца — одна история</h2>
+    <div class="photos">
+      <img src="assets/couple.jpeg" alt="Арсен и Амина" loading="lazy">
+      <img src="assets/rings.jpeg" alt="Обручальное кольцо" loading="lazy">
+      <img src="assets/details.jpeg" alt="Свадебные детали" loading="lazy">
+    </div>
+  </section>
+
+  <section>
+    <div class="invitation">
+      Дорогие родные и близкие!<br><br>
+      С огромной радостью приглашаем вас разделить с нами
+      один из самых счастливых и важных дней нашей жизни.<br><br>
+      Будем счастливы видеть вас среди наших дорогих гостей!
+    </div>
+    <div class="script" style="font-size:48px;margin-top:25px">
+      Арсен &amp; Амина
+    </div>
+  </section>
+
+  <section class="details">
+    <div class="eyebrow">Сохраните дату</div>
+    <h2>День нашей свадьбы</h2>
+    <div class="detail-date">20 ноября 2026</div>
+    <div class="detail-label">Время начала</div>
+    <div class="detail-value">17:00</div>
+    <div class="detail-label">Место проведения</div>
+    <div class="detail-value">Ак Бата Grand Hall</div>
+    <a class="map-link"
+      href="https://www.google.com/maps/search/?api=1&query=Ак+Бата+Grand+Hall+Бишкек"
+      target="_blank" rel="noopener noreferrer">Открыть карту</a>
+  </section>
+
+  <section>
+    <div class="eyebrow">С нетерпением ждём</div>
+    <h2>До нашей свадьбы осталось</h2>
+    <div class="countdown">
+      <div><div class="count-number" id="days">000</div><div class="count-label">Дней</div></div>
+      <div><div class="count-number" id="hours">00</div><div class="count-label">Часов</div></div>
+      <div><div class="count-number" id="minutes">00</div><div class="count-label">Минут</div></div>
+      <div><div class="count-number" id="seconds">00</div><div class="count-label">Секунд</div></div>
+    </div>
+  </section>
+
+  <section class="rsvp">
+    <div class="eyebrow">Пожалуйста, ответьте</div>
+    <h2>Будете ли вы с нами?</h2>
+    <p>Пожалуйста, подтвердите своё присутствие.</p>
+    <form class="form" id="rsvpForm">
+      <label class="field" for="guestName">ВАШЕ ИМЯ И ФАМИЛИЯ</label>
+      <input id="guestName" type="text" required maxlength="120"
+        placeholder="Имя и фамилия">
+      <label class="field">ВАШ ОТВЕТ</label>
+      <label class="option">
+        <input type="radio" name="attendance" value="Келем" required>
+        ❤️ Да, с удовольствием приду
+      </label>
+      <label class="option">
+        <input type="radio" name="attendance" value="Келе албайм" required>
+        🤍 К сожалению, не смогу
+      </label>
+      <button class="submit" type="submit">Ответить в WhatsApp</button>
+      <div class="message" id="message"></div>
+    </form>
+  </section>
+
+  <footer>
+    <div class="eyebrow">С любовью</div>
+    <div class="script">Арсен &amp; Амина</div>
+    <p>20 · 11 · 2026</p>
+  </footer>
+</main>
+
+<script>
+(() => {
+  const cover = document.getElementById("cover");
+  const main = document.getElementById("main");
+  const openButton = document.getElementById("openEnvelope");
+  const music = document.getElementById("music");
+  const musicButton = document.getElementById("musicButton");
+  let opened = false;
+
+  function openInvitation() {
+    if (opened) return;
+    opened = true;
+
+    // Музыка запускается прямо из нажатия пользователя.
+    musicButton.hidden = false;
+    const playAttempt = music.play();
+    if (playAttempt && typeof playAttempt.catch === "function") {
+      playAttempt.catch(() => {
+        // Если браузер заблокировал звук, конверт всё равно откроется.
+      });
+    }
+
+    cover.classList.add("opening");
+    main.classList.add("visible");
+    document.body.classList.remove("locked");
+
+    window.setTimeout(() => {
+      cover.classList.add("dismissed");
+    }, 850);
+  }
+
+  openButton.addEventListener("click", openInvitation);
+
+  musicButton.addEventListener("click", () => {
+    if (music.paused) {
+      music.play().catch(() => {});
+    } else {
+      music.pause();
+    }
+  });
+
+  function updateCountdown() {
+    const target = new Date("2026-11-20T17:00:00+06:00").getTime();
+    const diff = Math.max(0, target - Date.now());
+    const values = [
+      Math.floor(diff / 86400000),
+      Math.floor(diff % 86400000 / 3600000),
+      Math.floor(diff % 3600000 / 60000),
+      Math.floor(diff % 60000 / 1000)
+    ];
+    ["days","hours","minutes","seconds"].forEach((id, index) => {
+      document.getElementById(id).textContent =
+        String(values[index]).padStart(index === 0 ? 3 : 2, "0");
+    });
+  }
+
+  updateCountdown();
+  window.setInterval(updateCountdown, 1000);
+
+  document.getElementById("rsvpForm").addEventListener("submit", event => {
+    event.preventDefault();
+    const name = document.getElementById("guestName").value.trim();
+    const attendance = document.querySelector(
+      'input[name="attendance"]:checked'
+    )?.value;
+
+    if (!name || !attendance) return;
+
+    const text = `Свадьба Арсена и Амины%0AИмя: ${encodeURIComponent(name)}%0AОтвет: ${encodeURIComponent(attendance)}`;
+    const whatsappURL = "https://wa.me/?text=" + text;
+    window.location.href = whatsappURL;
+  });
+})();
+</script>
+</body>
+</html>
